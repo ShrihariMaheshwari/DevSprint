@@ -14,6 +14,7 @@ import SprintTemplates from "./pages/SprintTemplates";
 import ShareProgress from "./pages/ShareProgress";
 import GitHubIntegration from "./pages/GitHubIntegration";
 import NotFound from "./pages/NotFound";
+import MobileNav from "./components/MobileNav";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <MobileNav />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/sprint/new" element={<CreateSprint />} />

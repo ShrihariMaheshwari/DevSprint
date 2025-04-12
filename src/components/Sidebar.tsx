@@ -13,6 +13,7 @@ import {
   CopyCheck,
   Github,
 } from "lucide-react";
+import QuickActions from "./QuickActions";
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
@@ -22,10 +23,13 @@ const Sidebar: React.FC = () => {
   };
   
   return (
-    <div className="w-64 h-screen bg-secondary p-4 flex flex-col">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-primary">DevSprint</h1>
-        <p className="text-sm text-muted-foreground">Personal Agile Tracker</p>
+    <div className="w-64 h-screen bg-secondary p-4 flex flex-col hidden md:flex">
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-primary">DevSprint</h1>
+          <p className="text-sm text-muted-foreground">Personal Agile Tracker</p>
+        </div>
+        <QuickActions />
       </div>
       
       <div className="space-y-2">
