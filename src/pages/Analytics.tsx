@@ -7,7 +7,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Button } from "@/components/ui/button";
 import { Download, FileText, Clock, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Label } from "@/components/ui/label";
+import { Label as RechartLabel } from "recharts";
+import { Label as UILabel } from "@/components/ui/label";
 
 interface ChartDataItem {
   date: string;
@@ -178,7 +179,6 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
     console.log("Summary Content:", summary);
   };
 
-  // Calculate averages for displaying meaningful stats
   const avgTasksPerDay = dailyLogs.length > 0 
     ? (dailyLogs.reduce((total, log) => total + log.tasksCompleted.length, 0) / dailyLogs.length).toFixed(1) 
     : "0";
@@ -186,7 +186,6 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
   const totalTasks = dailyLogs.reduce((total, log) => total + log.tasksCompleted.length, 0);
   const totalBlockers = dailyLogs.reduce((total, log) => total + log.blockers.length, 0);
   
-  // Get most productive day
   const dailyTaskCounts = dailyLogs.reduce((acc, log) => {
     const day = new Date(log.date).toLocaleDateString('en-US', { weekday: 'long' });
     acc[day] = (acc[day] || 0) + log.tasksCompleted.length;
@@ -311,7 +310,7 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
                       animationDuration={300}
                     />
                     <ReferenceLine y={Number(avgTasksPerDay)} stroke="#8884d8" strokeDasharray="3 3" strokeOpacity={0.6}>
-                      <Label position="insideLeft" style={{ fill: "#8884d8", fontSize: 11 }}>Avg</Label>
+                      <RechartLabel position="insideLeft" style={{ fill: "#8884d8", fontSize: 11 }}>Avg</RechartLabel>
                     </ReferenceLine>
                     <Line 
                       type="monotone" 
