@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -25,7 +24,6 @@ const ShareProgress: React.FC = () => {
   const sprintLogs = dailyLogs.filter(log => log.sprintId === selectedSprintId);
   
   const completedTasks = sprintLogs.reduce((acc, log) => acc + log.tasksCompleted.length, 0);
-  const blockers = sprintLogs.reduce((acc, log) => acc + log.blockers.length, 0);
   
   // Calculate progress percentage
   const startDate = selectedSprint ? new Date(selectedSprint.startDate) : new Date();

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useSprint } from "@/context/SprintContext";
 import Layout from "@/components/Layout";
@@ -55,7 +54,7 @@ const Analytics: React.FC = () => {
     return data;
   }, [dailyLogs]);
 
-  // Generate example summary
+  // Generate example summary and export functions
   const generateWeeklySummary = async () => {
     // In a real implementation, we would call OpenAI API here
     toast({

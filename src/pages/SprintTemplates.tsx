@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -31,7 +30,6 @@ const SprintTemplates: React.FC = () => {
   const { addSprint } = useSprint();
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
-  // Sample templates
   const templates: Template[] = [
     {
       id: "frontend-feature",

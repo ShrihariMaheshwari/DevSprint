@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -85,7 +84,6 @@ const CreateDailyLog: React.FC = () => {
   };
   
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // Filter out empty tasks and blockers
     const filteredTasks = tasksCompleted.filter(task => task.trim() !== '');
     const filteredBlockers = blockers.filter(blocker => blocker.trim() !== '');
     
@@ -94,6 +92,7 @@ const CreateDailyLog: React.FC = () => {
       date: values.date,
       tasksCompleted: filteredTasks,
       blockers: filteredBlockers,
+      notes: "",
       reflections: values.reflections,
     });
     

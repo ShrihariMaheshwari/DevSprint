@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useContext } from "react";
 
 interface Sprint {
@@ -10,10 +11,12 @@ interface Sprint {
 
 interface DailyLog {
   id: string;
+  sprintId: string;
   date: string;
   tasksCompleted: string[];
   blockers: string[];
   notes: string;
+  reflections: string;
 }
 
 import { UserPreferences, defaultUserPreferences, getUserPreferences, saveUserPreferences } from "./UserPreferences";
@@ -21,8 +24,8 @@ import { UserPreferences, defaultUserPreferences, getUserPreferences, saveUserPr
 interface SprintContextType {
   sprints: Sprint[];
   dailyLogs: DailyLog[];
-  addSprint: (sprint: Sprint) => void;
-  addDailyLog: (log: DailyLog) => void;
+  addSprint: (sprint: Omit<Sprint, "id">) => void;
+  addDailyLog: (log: Omit<DailyLog, "id">) => void;
   currentSprint: Sprint | null;
   userPreferences: UserPreferences;
   updateUserPreferences: (preferences: Partial<UserPreferences>) => void;
@@ -67,12 +70,20 @@ export const SprintProvider: React.FC<{children: React.ReactNode}> = ({ children
     localStorage.setItem('dailyLogs', JSON.stringify(dailyLogs));
   }, [dailyLogs]);
 
-  const addSprint = (sprint: Sprint) => {
-    setSprints([...sprints, sprint]);
+  const addSprint = (sprintData: Omit<Sprint, "id">) => {
+    const newSprint: Sprint = {
+      ...sprintData,
+      id: `sprint-${Date.now()}`
+    };
+    setSprints([...sprints, newSprint]);
   };
 
-  const addDailyLog = (log: DailyLog) => {
-    setDailyLogs([...dailyLogs, log]);
+  const addDailyLog = (logData: Omit<DailyLog, "id">) => {
+    const newLog: DailyLog = {
+      ...logData,
+      id: `log-${Date.now()}`
+    };
+    setDailyLogs([...dailyLogs, newLog]);
   };
 
   // Calculate current sprint based on date
