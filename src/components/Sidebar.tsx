@@ -12,6 +12,7 @@ import {
   Share2,
   CopyCheck,
   Github,
+  Settings,
 } from "lucide-react";
 import QuickActions from "./QuickActions";
 
@@ -100,6 +101,16 @@ const Sidebar: React.FC = () => {
           >
             <Github className="mr-2 h-5 w-5" />
             GitHub
+          </Button>
+        </Link>
+        
+        <Link to="/settings" className="block">
+          <Button
+            variant={isActive("/settings") ? "default" : "ghost"}
+            className="w-full justify-start"
+          >
+            <Settings className="mr-2 h-5 w-5" />
+            Settings
           </Button>
         </Link>
       </div>

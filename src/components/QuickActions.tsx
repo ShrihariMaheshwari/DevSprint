@@ -17,7 +17,8 @@ import {
   Share2, 
   Github, 
   PanelRightOpen, 
-  CopyCheck 
+  CopyCheck,
+  Settings
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -67,6 +68,11 @@ const QuickActions: React.FC = () => {
         <DropdownMenuItem onClick={() => handleQuickAction("/github")}>
           <Github className="mr-2 h-4 w-4" />
           <span>GitHub Integration</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => handleQuickAction("/settings")}>
+          <Settings className="mr-2 h-4 w-4" />
+          <span>Settings</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

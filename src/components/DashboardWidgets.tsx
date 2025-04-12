@@ -10,9 +10,13 @@ import {
   AlertTriangle,
   BarChart3, 
   GitCommit, 
-  Calendar 
+  Calendar,
+  ClipboardList,
+  Calendar as CalendarIcon
 } from "lucide-react";
 import { useSprint } from "@/context/SprintContext";
+import { getUserPreferences } from "@/context/UserPreferences";
+import { useNavigate } from "react-router-dom";
 
 interface WidgetProps {
   type: string;
@@ -21,6 +25,7 @@ interface WidgetProps {
 
 const DashboardWidget: React.FC<WidgetProps> = ({ type, className }) => {
   const { sprints, dailyLogs } = useSprint();
+  const navigate = useNavigate();
   const currentDate = new Date();
   const activeSprints = sprints.filter(sprint => {
     const startDate = new Date(sprint.startDate);
@@ -59,6 +64,17 @@ const DashboardWidget: React.FC<WidgetProps> = ({ type, className }) => {
     return Math.round(((now - start) / (end - start)) * 100);
   };
 
+  // Get upcoming deadlines
+  const upcomingDeadlines = [...sprints]
+    .filter(sprint => new Date(sprint.endDate) >= currentDate)
+    .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime())
+    .slice(0, 3);
+  
+  // Get recent daily logs
+  const recentDailyLogs = [...dailyLogs]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
+
   const widgets = {
     "active-sprint": (
       <Card className={className}>
@@ -93,7 +109,12 @@ const DashboardWidget: React.FC<WidgetProps> = ({ type, className }) => {
           ) : (
             <div className="text-center py-2">
               <p className="text-sm text-muted-foreground">No active sprint</p>
-              <Button variant="ghost" size="sm" className="mt-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="mt-2"
+                onClick={() => navigate("/sprint/new")}
+              >
                 <Calendar className="mr-2 h-4 w-4" />
                 Start New Sprint
               </Button>
@@ -163,7 +184,12 @@ const DashboardWidget: React.FC<WidgetProps> = ({ type, className }) => {
             <span className="text-3xl font-bold">12</span>
             <span className="text-xs text-muted-foreground">Recent commits</span>
           </div>
-          <Button variant="ghost" size="sm" className="w-full mt-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="w-full mt-2"
+            onClick={() => navigate("/github")}
+          >
             <GitCommit className="mr-2 h-4 w-4" />
             View GitHub
           </Button>
@@ -202,6 +228,71 @@ const DashboardWidget: React.FC<WidgetProps> = ({ type, className }) => {
         </CardContent>
       </Card>
     ),
+    "upcoming-deadlines": (
+      <Card className={className}>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center">
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            Upcoming Deadlines
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {upcomingDeadlines.length > 0 ? (
+            <div className="space-y-2">
+              {upcomingDeadlines.map((sprint, index) => (
+                <div key={`deadline-${index}`} className="flex justify-between text-sm">
+                  <span className="truncate">{sprint.name}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(sprint.endDate).toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-2">
+              <p className="text-sm text-muted-foreground">No upcoming deadlines</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    ),
+    "recent-logs": (
+      <Card className={className}>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center">
+            <ClipboardList className="mr-2 h-4 w-4" />
+            Recent Daily Logs
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {recentDailyLogs.length > 0 ? (
+            <div className="space-y-2">
+              {recentDailyLogs.map((log, index) => (
+                <div key={`log-${index}`} className="flex justify-between text-sm">
+                  <span className="truncate">{log.date}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {log.tasksCompleted?.length || 0} tasks
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-2">
+              <p className="text-sm text-muted-foreground">No recent logs</p>
+            </div>
+          )}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="w-full mt-2"
+            onClick={() => navigate("/daily-log/new")}
+          >
+            <ClipboardList className="mr-2 h-4 w-4" />
+            Create Log
+          </Button>
+        </CardContent>
+      </Card>
+    ),
   };
   
   return widgets[type as keyof typeof widgets] || null;
@@ -211,20 +302,14 @@ interface DashboardWidgetsProps {
   layout?: string[];
 }
 
-const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({ 
-  layout = [
-    "active-sprint", 
-    "tasks-completed", 
-    "blockers", 
-    "daily-streak", 
-    "github-activity", 
-    "productivity-score", 
-    "time-tracking"
-  ] 
-}) => {
+const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({ layout }) => {
+  // Get user preferences for dashboard widgets
+  const userPreferences = getUserPreferences();
+  const widgetsToShow = layout || userPreferences.dashboardWidgets;
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {layout.map((widgetType, index) => (
+      {widgetsToShow.map((widgetType, index) => (
         <DashboardWidget 
           key={`${widgetType}-${index}`} 
           type={widgetType}

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Home, Plus, Clipboard, LineChart, CopyCheck, Share2, Github } from "lucide-react";
+import { Menu, Home, Plus, Clipboard, LineChart, CopyCheck, Share2, Github, Settings } from "lucide-react";
 
 const MobileNav: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -104,6 +104,16 @@ const MobileNav: React.FC = () => {
                     GitHub
                   </Button>
                 </Link>
+                
+                <Link to="/settings" className="block" onClick={closeSheet}>
+                  <Button
+                    variant={isActive("/settings") ? "default" : "ghost"}
+                    className="w-full justify-start"
+                  >
+                    <Settings className="mr-2 h-5 w-5" />
+                    Settings
+                  </Button>
+                </Link>
               </div>
             </div>
           </SheetContent>
@@ -120,6 +130,11 @@ const MobileNav: React.FC = () => {
         <Link to="/sprint/new">
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <Plus className="h-5 w-5" />
+          </Button>
+        </Link>
+        <Link to="/settings">
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Settings className="h-5 w-5" />
           </Button>
         </Link>
       </div>

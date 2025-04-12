@@ -13,6 +13,7 @@ import Analytics from "./pages/Analytics";
 import SprintTemplates from "./pages/SprintTemplates";
 import ShareProgress from "./pages/ShareProgress";
 import GitHubIntegration from "./pages/GitHubIntegration";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import MobileNav from "./components/MobileNav";
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/templates" element={<SprintTemplates />} />
             <Route path="/share" element={<ShareProgress />} />
             <Route path="/github" element={<GitHubIntegration />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
