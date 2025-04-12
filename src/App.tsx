@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import CreateSprint from "./pages/CreateSprint";
 import CreateDailyLog from "./pages/CreateDailyLog";
 import ViewLog from "./pages/ViewLog";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/sprint/new" element={<CreateSprint />} />
             <Route path="/daily-log/new" element={<CreateDailyLog />} />
             <Route path="/log/:id" element={<ViewLog />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
