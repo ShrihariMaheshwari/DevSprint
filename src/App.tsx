@@ -10,6 +10,9 @@ import CreateSprint from "./pages/CreateSprint";
 import CreateDailyLog from "./pages/CreateDailyLog";
 import ViewLog from "./pages/ViewLog";
 import Analytics from "./pages/Analytics";
+import SprintTemplates from "./pages/SprintTemplates";
+import ShareProgress from "./pages/ShareProgress";
+import GitHubIntegration from "./pages/GitHubIntegration";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +30,9 @@ const App = () => (
             <Route path="/daily-log/new" element={<CreateDailyLog />} />
             <Route path="/log/:id" element={<ViewLog />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/templates" element={<SprintTemplates />} />
+            <Route path="/share" element={<ShareProgress />} />
+            <Route path="/github" element={<GitHubIntegration />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

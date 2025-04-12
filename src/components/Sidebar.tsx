@@ -9,6 +9,9 @@ import {
   Clipboard,
   LineChart,
   User,
+  Share2,
+  CopyCheck,
+  Github,
 } from "lucide-react";
 
 const Sidebar: React.FC = () => {
@@ -46,6 +49,16 @@ const Sidebar: React.FC = () => {
           </Button>
         </Link>
         
+        <Link to="/templates" className="block">
+          <Button
+            variant={isActive("/templates") ? "default" : "ghost"}
+            className="w-full justify-start"
+          >
+            <CopyCheck className="mr-2 h-5 w-5" />
+            Templates
+          </Button>
+        </Link>
+        
         <Link to="/daily-log/new" className="block">
           <Button
             variant={isActive("/daily-log/new") ? "default" : "ghost"}
@@ -63,6 +76,26 @@ const Sidebar: React.FC = () => {
           >
             <LineChart className="mr-2 h-5 w-5" />
             Analytics
+          </Button>
+        </Link>
+        
+        <Link to="/share" className="block">
+          <Button
+            variant={isActive("/share") ? "default" : "ghost"}
+            className="w-full justify-start"
+          >
+            <Share2 className="mr-2 h-5 w-5" />
+            Share Progress
+          </Button>
+        </Link>
+        
+        <Link to="/github" className="block">
+          <Button
+            variant={isActive("/github") ? "default" : "ghost"}
+            className="w-full justify-start"
+          >
+            <Github className="mr-2 h-5 w-5" />
+            GitHub
           </Button>
         </Link>
       </div>
