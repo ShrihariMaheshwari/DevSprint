@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useSprint } from "@/context/SprintContext";
 import Layout from "@/components/Layout";
@@ -9,13 +8,18 @@ import { Button } from "@/components/ui/button";
 import { Download, FileText, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface ChartDataItem {
+  date: string;
+  displayDate: string;
+  count: number;
+}
+
 const Analytics: React.FC = () => {
   const { sprints, dailyLogs } = useSprint();
   const { toast } = useToast();
 
-  // Process data for charts
   const taskCompletionData = React.useMemo(() => {
-    const data: { date: string; count: number }[] = [];
+    const data: ChartDataItem[] = [];
     const today = new Date();
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(today.getDate() - 6);
@@ -42,7 +46,7 @@ const Analytics: React.FC = () => {
   }, [dailyLogs]);
 
   const blockerData = React.useMemo(() => {
-    const data: { date: string; count: number }[] = [];
+    const data: ChartDataItem[] = [];
     const today = new Date();
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(today.getDate() - 6);
@@ -68,7 +72,6 @@ const Analytics: React.FC = () => {
     return data;
   }, [dailyLogs]);
 
-  // Chart configuration
   const chartConfig = {
     tasks: {
       label: "Tasks Completed",
@@ -86,18 +89,14 @@ const Analytics: React.FC = () => {
     },
   };
 
-  // Generate example summary and export functions
   const generateWeeklySummary = async () => {
-    // In a real implementation, we would call OpenAI API here
     toast({
       title: "Summary Generated",
       description: "Your weekly summary is ready to view!",
     });
 
-    // Simulate waiting for API response
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Return a simulated summary
     return `# Weekly Summary (${new Date().toLocaleDateString()} - ${new Date().toLocaleDateString()})
 
 ## Accomplishments
@@ -119,7 +118,6 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
 - Document API endpoints`;
   };
 
-  // Export all logs to markdown
   const exportToMarkdown = () => {
     let markdownContent = `# Sprint Logs Export\n\n`;
     
@@ -152,7 +150,6 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
       });
     });
     
-    // Create a downloadable file
     const blob = new Blob([markdownContent], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -168,7 +165,6 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
     });
   };
 
-  // Function to handle showing the weekly summary
   const showWeeklySummary = async () => {
     const summary = await generateWeeklySummary();
     
@@ -180,7 +176,7 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
     
     console.log("Summary Content:", summary);
   };
-  
+
   return (
     <Layout>
       <div className="space-y-8">
