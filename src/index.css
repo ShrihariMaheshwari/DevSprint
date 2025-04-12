@@ -57,18 +57,21 @@
   }
 
   /* Smooth transitions for hover states */
-  a, button, .transition-all {
-    @apply transition-all duration-200;
+  a, button, .transition-element {
+    @apply duration-200;
+    transition-property: all;
   }
   
   /* Card hover effects */
   .hover-card {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+    @apply duration-300 hover:shadow-lg hover:-translate-y-1;
+    transition-property: all;
   }
   
   /* Button animations */
   button {
-    @apply transition-all duration-200;
+    @apply duration-200;
+    transition-property: all;
   }
 }
 

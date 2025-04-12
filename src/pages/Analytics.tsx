@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useSprint } from "@/context/SprintContext";
 import Layout from "@/components/Layout";
@@ -8,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Button } from "@/components/ui/button";
 import { Download, FileText, Clock, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 interface ChartDataItem {
   date: string;
