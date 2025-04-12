@@ -1,11 +1,12 @@
+
 import React from "react";
 import { useSprint } from "@/context/SprintContext";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, ReferenceLine } from "recharts";
 import { Button } from "@/components/ui/button";
-import { Download, FileText, Clock } from "lucide-react";
+import { Download, FileText, Clock, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ChartDataItem {
@@ -177,27 +178,92 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
     console.log("Summary Content:", summary);
   };
 
+  // Calculate averages for displaying meaningful stats
+  const avgTasksPerDay = dailyLogs.length > 0 
+    ? (dailyLogs.reduce((total, log) => total + log.tasksCompleted.length, 0) / dailyLogs.length).toFixed(1) 
+    : "0";
+  
+  const totalTasks = dailyLogs.reduce((total, log) => total + log.tasksCompleted.length, 0);
+  const totalBlockers = dailyLogs.reduce((total, log) => total + log.blockers.length, 0);
+  
+  // Get most productive day
+  const dailyTaskCounts = dailyLogs.reduce((acc, log) => {
+    const day = new Date(log.date).toLocaleDateString('en-US', { weekday: 'long' });
+    acc[day] = (acc[day] || 0) + log.tasksCompleted.length;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  const mostProductiveDay = Object.entries(dailyTaskCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Not enough data";
+  
   return (
     <Layout>
       <div className="space-y-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
-          <h1 className="text-3xl font-bold tracking-tight">Analytics & Reports</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gradient">Analytics & Reports</h1>
           <div className="flex flex-col xs:flex-row gap-2">
-            <Button onClick={showWeeklySummary} className="flex items-center gap-1.5 shadow-sm" variant="secondary">
+            <Button 
+              onClick={showWeeklySummary} 
+              className="flex items-center gap-1.5 shadow-sm hover:bg-secondary/80 hover:translate-y-[-1px] transition-all" 
+              variant="secondary"
+            >
               <FileText className="h-4 w-4" />
               Weekly Summary
             </Button>
-            <Button onClick={exportToMarkdown} className="flex items-center gap-1.5 shadow-sm">
+            <Button 
+              onClick={exportToMarkdown} 
+              className="flex items-center gap-1.5 shadow-sm hover:bg-primary/90 hover:translate-y-[-1px] transition-all"
+            >
               <Download className="h-4 w-4" />
               Export to Markdown
             </Button>
           </div>
         </div>
         
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <Card className="border-border/50 shadow-sm hover:shadow transition-shadow bg-secondary/40 backdrop-blur-sm overflow-hidden hover-card">
+            <CardContent className="pt-6 pb-4 flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Total Tasks Completed</p>
+                <p className="text-3xl font-bold text-primary">{totalTasks}</p>
+              </div>
+              <div className="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+                <CheckCircle2 className="h-6 w-6" />
+              </div>
+            </CardContent>
+          </Card>
+                
+          <Card className="border-border/50 shadow-sm hover:shadow transition-shadow bg-secondary/40 backdrop-blur-sm overflow-hidden hover-card">
+            <CardContent className="pt-6 pb-4 flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Total Blockers</p>
+                <p className="text-3xl font-bold text-destructive">{totalBlockers}</p>
+              </div>
+              <div className="h-12 w-12 flex items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                <AlertCircle className="h-6 w-6" />
+              </div>
+            </CardContent>
+          </Card>
+                
+          <Card className="border-border/50 shadow-sm hover:shadow transition-shadow bg-secondary/40 backdrop-blur-sm overflow-hidden hover-card">
+            <CardContent className="pt-6 pb-4 flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Avg. Tasks Per Day</p>
+                <p className="text-3xl font-bold text-primary/90">{avgTasksPerDay}</p>
+              </div>
+              <div className="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+                <TrendingUp className="h-6 w-6" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="overflow-hidden border-border/50 shadow-sm hover:shadow transition-shadow">
+          <Card className="overflow-hidden border-border/50 shadow-sm hover:shadow transition-shadow hover-card">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold">Daily Completed Tasks</CardTitle>
+              <CardTitle className="text-xl font-semibold flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-primary" />
+                Daily Completed Tasks
+              </CardTitle>
               <CardDescription>
                 Tasks completed each day over the past week
               </CardDescription>
@@ -232,7 +298,7 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           return (
-                            <div className="bg-card border border-border/30 shadow-lg rounded-md p-3 text-sm">
+                            <div className="bg-card border border-border/30 shadow-lg rounded-md p-3 text-sm backdrop-blur-md">
                               <p className="font-medium">{payload[0].payload.displayDate}</p>
                               <p className="text-primary font-semibold mt-1">
                                 {payload[0].value} Tasks Completed
@@ -242,7 +308,11 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
                         }
                         return null;
                       }}
+                      animationDuration={300}
                     />
+                    <ReferenceLine y={Number(avgTasksPerDay)} stroke="#8884d8" strokeDasharray="3 3" strokeOpacity={0.6}>
+                      <Label position="insideLeft" style={{ fill: "#8884d8", fontSize: 11 }}>Avg</Label>
+                    </ReferenceLine>
                     <Line 
                       type="monotone" 
                       dataKey="count" 
@@ -252,6 +322,7 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
                       activeDot={{ r: 6, strokeWidth: 0, fill: "#8B5CF6" }}
                       name="Tasks"
                       animationDuration={1500}
+                      fill="url(#tasksGradient)"
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -259,9 +330,12 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
             </CardContent>
           </Card>
           
-          <Card className="overflow-hidden border-border/50 shadow-sm hover:shadow transition-shadow">
+          <Card className="overflow-hidden border-border/50 shadow-sm hover:shadow transition-shadow hover-card">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold">Daily Blockers</CardTitle>
+              <CardTitle className="text-xl font-semibold flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-destructive" />
+                Daily Blockers
+              </CardTitle>
               <CardDescription>
                 Blockers reported each day over the past week
               </CardDescription>
@@ -296,7 +370,7 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           return (
-                            <div className="bg-card border border-border/30 shadow-lg rounded-md p-3 text-sm">
+                            <div className="bg-card border border-border/30 shadow-lg rounded-md p-3 text-sm backdrop-blur-md">
                               <p className="font-medium">{payload[0].payload.displayDate}</p>
                               <p className="text-destructive font-semibold mt-1">
                                 {payload[0].value} Blockers
@@ -306,6 +380,7 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
                         }
                         return null;
                       }}
+                      animationDuration={300}
                     />
                     <Bar 
                       dataKey="count" 
@@ -321,7 +396,7 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
           </Card>
         </div>
         
-        <Card className="border-border/50 shadow-sm hover:shadow transition-shadow">
+        <Card className="border-border/50 shadow-sm transition-shadow hover-card">
           <CardHeader>
             <CardTitle className="text-xl font-semibold flex items-center gap-2">
               <Clock className="h-5 w-5 text-primary" />
@@ -334,31 +409,31 @@ Based on your daily logs, you seem most productive in the mornings. Consider sch
           <CardContent>
             <div className="space-y-6">
               <div className="flex items-start gap-4 p-4 rounded-lg bg-primary/5 border border-primary/10">
-                <Clock className="h-10 w-10 text-primary mt-1" />
+                <Clock className="h-10 w-10 text-primary mt-1 animate-pulse-slow" />
                 <div>
                   <h4 className="font-medium text-lg">Peak Productivity Time</h4>
-                  <p className="text-muted-foreground mt-1">Based on your logs, you appear most productive in the mornings. Consider scheduling complex tasks during this period to maximize output.</p>
+                  <p className="text-muted-foreground mt-1">Based on your logs, you appear most productive on <span className="text-primary font-medium">{mostProductiveDay}</span>. Consider scheduling complex tasks during this period to maximize output.</p>
                 </div>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-                <div className="bg-secondary/40 p-5 rounded-lg border border-border/50 shadow-sm hover:shadow transition-shadow">
-                  <div className="text-3xl font-bold text-primary">
-                    {dailyLogs.reduce((total, log) => total + log.tasksCompleted.length, 0)}
+                <div className="bg-secondary/40 p-5 rounded-lg border border-border/50 shadow-sm hover:shadow transition-shadow backdrop-blur-sm hover:-translate-y-1">
+                  <div className="text-3xl font-bold text-gradient">
+                    {totalTasks}
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">Total Tasks Completed</div>
                 </div>
                 
-                <div className="bg-secondary/40 p-5 rounded-lg border border-border/50 shadow-sm hover:shadow transition-shadow">
+                <div className="bg-secondary/40 p-5 rounded-lg border border-border/50 shadow-sm hover:shadow transition-shadow backdrop-blur-sm hover:-translate-y-1">
                   <div className="text-3xl font-bold text-destructive">
-                    {dailyLogs.reduce((total, log) => total + log.blockers.length, 0)}
+                    {totalBlockers}
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">Total Blockers Encountered</div>
                 </div>
                 
-                <div className="bg-secondary/40 p-5 rounded-lg border border-border/50 shadow-sm hover:shadow transition-shadow">
-                  <div className="text-3xl font-bold text-primary/90">
-                    {dailyLogs.length > 0 ? (dailyLogs.reduce((total, log) => total + log.tasksCompleted.length, 0) / dailyLogs.length).toFixed(1) : "0"}
+                <div className="bg-secondary/40 p-5 rounded-lg border border-border/50 shadow-sm hover:shadow transition-shadow backdrop-blur-sm hover:-translate-y-1">
+                  <div className="text-3xl font-bold text-gradient">
+                    {avgTasksPerDay}
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">Avg. Tasks Per Day</div>
                 </div>
